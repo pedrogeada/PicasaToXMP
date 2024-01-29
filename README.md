@@ -8,7 +8,7 @@ PicasaToXMP allows to just check differences so that you know what is going to b
 
 PicasaToXMP follows a conservative approach where faces are never deleted and in case of any error during the read or write process, it will stop any changes to that file.
 
-Writing the XMP headers is done by using the external exiftool, which is a well know console application by Phil Harbey to handle metadata and therefore quite safe in making sure metadata is written correctly to the image files
+Writing the XMP headers is done by using the external tool "exiftool", which is a well know console application by Phil Harbey to handle metadata and therefore quite safe in making sure metadata is written correctly to the image files
 
 Once you write the XMP headers, you can still use Google Picasa to browse through specific faces or check the faces detected in specific images
 
