@@ -24,6 +24,9 @@ namespace PicasaToXMP
         public string FileName { get; set; }
         public int ImageWidth { get; set; } = 0;
         public int ImageHeight { get; set; } = 0;
+        public int AppliedImageWidth { get; set; } = 0;
+        public int AppliedImageHeight { get; set; } = 0;
+
         public List<FaceRegion> regions = new List<FaceRegion>();
         public List<FaceRegion> picasaRegions = new List<FaceRegion>();
         public List<FaceRegion> difRegions = new List<FaceRegion>();
@@ -57,6 +60,9 @@ namespace PicasaToXMP
                 {
                     ImageWidth=jpeg.GetImageWidth();
                     ImageHeight=jpeg.GetImageHeight();
+
+                    width = ImageWidth;
+                    height = ImageHeight;
                 }
 
                 XmpDirectory xmp = dir.OfType<XmpDirectory>().FirstOrDefault();
@@ -67,10 +73,26 @@ namespace PicasaToXMP
                         if (property.Path != null && property.Path.StartsWith("mwg-rs:Regions") && property.Value != null)
                         {
                             if (property.Path.EndsWith("mwg-rs:AppliedToDimensions/stDim:w"))
+                            {
                                 width = int.Parse(property.Value);
+                                AppliedImageWidth = width;
+                                if (width != ImageWidth)
+                                {
+                                    Console.WriteLine("Warning: AppliedToDimensions Width mismatch " + this.FileName);
+                                    width = ImageWidth;
+                                }
+                            }
 
                             if (property.Path.EndsWith("mwg-rs:AppliedToDimensions/stDim:h"))
+                            {
                                 height = int.Parse(property.Value);
+                                AppliedImageHeight = height;
+                                if (height != ImageHeight)
+                                {
+                                    Console.WriteLine("Warning: AppliedToDimensions Height mismatch " + this.FileName);
+                                    height = ImageHeight;
+                                }
+                            }
 
                             if (property.Path.Contains("mwg-rs:RegionList"))
                             {
@@ -195,9 +217,9 @@ namespace PicasaToXMP
                         continue;
 
                     if (count == 0)
-                        regionlist += "["+RegionListString(pRegion);
+                        regionlist += "["+RegionListString(pRegion,regions.Count==0);
                     else
-                        regionlist += "," + RegionListString(pRegion);
+                        regionlist += "," + RegionListString(pRegion,regions.Count==0);
 
                     count++;
                 }
@@ -226,14 +248,25 @@ namespace PicasaToXMP
             }
         }
 
-        private string RegionListString(FaceRegion r)
+        private string RegionListString(FaceRegion r, bool isNew)
         {
+            int w = ImageWidth;
+            int h = ImageHeight;
+            if (!isNew)
+            {
+                if (AppliedImageWidth != 0)
+                    w = AppliedImageWidth;
+
+                if (AppliedImageHeight!=0)
+                    h = AppliedImageHeight; 
+            }
+
             return "{" +
                 "Area=" +
-                    "{W=" + ((double)r.Rect.Width / ImageWidth).ToString("F6") +
-                    ",H=" + ((double)r.Rect.Height / ImageHeight).ToString("F6") +
-                    ",X=" + ((double)r.Rect.X / ImageWidth).ToString("F6") +
-                    ",Y=" + ((double)r.Rect.Y / ImageHeight).ToString("F6") +
+                    "{W=" + ((double)r.Rect.Width / w).ToString("F6") +
+                    ",H=" + ((double)r.Rect.Height / h).ToString("F6") +
+                    ",X=" + ((double)r.Rect.X / w).ToString("F6") +
+                    ",Y=" + ((double)r.Rect.Y / h).ToString("F6") +
                     ",Unit=normalized}," +
                 "Name=\"" + GlobalVars.contacts.GetContactName(r.ContactId) + "\",Type=Face}";
         }
