@@ -5,17 +5,19 @@ string folderName = "";
 string contactsFile = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Google\\Picasa2\\contacts\\contacts.xml";
 bool argWrite = false;
 bool argRecursive = false;
+bool argListXmp = false;
 string singleFilePath = "";
 List<FolderInfo> folders=new List<FolderInfo>();
 
 void WriteUsage()
 {
-    Console.WriteLine("Usage: PicasaToXMP <folder|filename> [-c <contactsFile>] [-e <ExifToolFile>] [-w] [-r]");
+    Console.WriteLine("Usage: PicasaToXMP <folder|filename> [-c <contactsFile>] [-e <ExifToolFile>] [-w] [-r] [-lx]");
     Console.WriteLine("    <folder|filename> is mandatory and it will execute on all files in folder or to the specific filename");
     Console.WriteLine("    -c Optional parameter to provide the location of Picasa contacts file");
     Console.WriteLine("    -e Optional parameter to provide the location of exiftool");
     Console.WriteLine("    -w Writes the XMP to the image files");
     Console.WriteLine("    -r Runs recursively to all sub-folders");
+    Console.WriteLine("    -lx List all XMP faces. Ignores any other operations/write parameters");
 }
 
 static List<string> GetSubFolders(string folderPath)
@@ -86,6 +88,10 @@ for (int i = 1; i < args.Length; i++)
         case "-r":
             argRecursive = true;
             break;
+
+        case "-lx":
+            argListXmp = true;
+            break;
     }
 }
 
@@ -130,6 +136,12 @@ foreach (string folder in foldersNames)
             success = false;
             continue;
         }
+    }
+
+    if (argListXmp)
+    {
+        folderInfo.ConsoleListXmp();
+        continue;
     }
 
     if (!folderInfo.ReadPicasaIni())

@@ -14,10 +14,11 @@ Once you write the XMP headers, you can still use Google Picasa to browse throug
 
 This has been used personally to manage my own files but is provided with source code but **no guarantee whatsover that it will work for your case**. Make sure you have proper backups and check carefully if the changes done were according to what you would expect.
 
-    Usage: PicasaToXMP <folder|filename> [-c <contactsFile>] [-e <ExifToolFile>] [-w] [-r]
+    Usage: PicasaToXMP <folder|filename> [-c <contactsFile>] [-e <ExifToolFile>] [-w] [-r] [-lx]
         <folder|filename> is mandatory and it will execute on all files in folder or to the specific filename
         -c Optional parameter to provide the location of Picasa contacts file
         -e Optional parameter to provide the location of exiftool (assumed in the same folder or environment path)
         -w Writes the XMP to the image files (without -w it would be only to check the differences but not doing any changes)
         -r Runs recursively to all sub-folders
+        -lx List all XMP faces. Ignores any other operations/write parameters
 

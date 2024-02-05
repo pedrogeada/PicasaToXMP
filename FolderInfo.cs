@@ -179,6 +179,28 @@ namespace PicasaToXMP
             }
         }
 
+        public void ConsoleListXmp()
+        {
+            foreach (ImageFileInfo f in Files)
+            {
+                foreach (FaceRegion region in f.regions)
+                {
+                    string name = GlobalVars.contacts.GetContactName(region.ContactId);
+                    if (!String.IsNullOrEmpty(name))
+                    {
+                        int areaperm = -1;
+                        if (f.ImageHeight > 0 && f.ImageWidth > 0)
+                        {
+                            areaperm = (int)(Math.Round((double)region.Rect.Width * region.Rect.Height * 1000 / ((double)f.ImageWidth * f.ImageHeight), 0) + 0.1);
+                        }
+
+                        Console.WriteLine(f.FileName + "\t" + name + "\t" + areaperm.ToString());
+                    }
+                }
+            }
+        }
+
+
         static public double CalculateRectOverlapPercentage(Rectangle rect1, Rectangle rect2)
         {
             Rectangle intersection = Rectangle.Intersect(rect1, rect2);
